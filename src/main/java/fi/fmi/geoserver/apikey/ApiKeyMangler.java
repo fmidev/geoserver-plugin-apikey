@@ -17,6 +17,8 @@ public class ApiKeyMangler implements URLMangler {
 
     /** Header key for API key value. */
     private static final String API_KEY_HEADER = "fmi-apikey";
+    /** Header key for API key omit value. */
+    private static final String OMIT_API_KEY_HEADER = "omit-fmi-apikey";
     /**
      * URL parameter key for API key value. Notice, URL parameter is not checked if this key is
      * {null} or empty. Normally, {API_KEY_HEADER} may also be set for this value.
@@ -26,6 +28,18 @@ public class ApiKeyMangler implements URLMangler {
     private static final String URL_SEPARATOR = "/";
     /** URL path for API key. */
     private static final String API_KEY_URL_PATH = URL_SEPARATOR + API_KEY_HEADER + URL_SEPARATOR;
+
+    /**
+     * @param {HttpServletRequest} request May not be {null}.
+     * @return {boolean} Omit API key when {true}, else {false}.
+     */
+    private boolean omitApiKey(final HttpServletRequest request) {
+        // Try to get the omit API key from the request headers.
+        // Notice, header is case insensitive.
+        final String omitApiKey = request.getHeader(OMIT_API_KEY_HEADER);
+        // Omit if header given and value is not "0" or "false".
+        return !(null == omitApiKey || omitApiKey.equals("0") || omitApiKey.equals("false"));
+    }
 
     /**
      * @param {HttpServletRequest} request May not be {null}.
@@ -70,7 +84,7 @@ public class ApiKeyMangler implements URLMangler {
                 if (attributes instanceof ServletRequestAttributes) {
                     final HttpServletRequest request =
                             ((ServletRequestAttributes) attributes).getRequest();
-                    if (null != request) {
+                    if (null != request && !omitApiKey(request)) {
                         // Get possible API key from the request.
                         final String apiKey = getApiKey(request);
                         // API key path will be included into base URL only
