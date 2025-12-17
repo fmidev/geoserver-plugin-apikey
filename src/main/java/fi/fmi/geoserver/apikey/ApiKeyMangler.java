@@ -20,8 +20,8 @@ public class ApiKeyMangler implements URLMangler {
     /** Header key for API key omit value. */
     private static final String OMIT_API_KEY_HEADER = "omit-fmi-apikey";
     /**
-     * URL parameter key for API key value. Notice, URL parameter is not checked if this key is
-     * {null} or empty. Normally, {API_KEY_HEADER} may also be set for this value.
+     * URL parameter key for API key value. Notice, URL parameter is not checked if this key is {null} or empty.
+     * Normally, {API_KEY_HEADER} may also be set for this value.
      */
     private static final String API_KEY_PARAMETER = null;
     /** URL path separator. */
@@ -49,16 +49,11 @@ public class ApiKeyMangler implements URLMangler {
         // Try to get the API key from the request headers.
         // Notice, header is case insensitive.
         String apiKey = request.getHeader(API_KEY_HEADER);
-        if (null != API_KEY_PARAMETER
-                && !API_KEY_PARAMETER.isEmpty()
-                && (null == apiKey || apiKey.isEmpty())) {
+        if (null != API_KEY_PARAMETER && !API_KEY_PARAMETER.isEmpty() && (null == apiKey || apiKey.isEmpty())) {
             // API key was not in header.
             // Try to get it from parameters.
             final String[] paramApiKey = request.getParameterValues(API_KEY_PARAMETER);
-            if (null != paramApiKey
-                    && 0 < paramApiKey.length
-                    && null != paramApiKey[0]
-                    && !paramApiKey[0].isEmpty()) {
+            if (null != paramApiKey && 0 < paramApiKey.length && null != paramApiKey[0] && !paramApiKey[0].isEmpty()) {
                 apiKey = paramApiKey[0];
             }
         }
@@ -66,24 +61,20 @@ public class ApiKeyMangler implements URLMangler {
     }
 
     /**
-     * Get API key from the request header or from URL parameters and append API key as path to the
-     * base URL.
+     * Get API key from the request header or from URL parameters and append API key as path to the base URL.
      *
      * <p>Also, see super URLMangler class for function description.
      */
-    public void mangleURL(
-            StringBuilder baseURL, StringBuilder path, Map<String, String> kvp, URLType type) {
+    public void mangleURL(StringBuilder baseURL, StringBuilder path, Map<String, String> kvp, URLType type) {
         try {
             // Change backlinks of GeoServer URLs.
             if (null != baseURL && URLType.EXTERNAL != type) {
                 // Use context holder to get the request object.
-                final RequestAttributes attributes =
-                        RequestContextHolder.currentRequestAttributes();
+                final RequestAttributes attributes = RequestContextHolder.currentRequestAttributes();
                 // API key is related to the HTTP requests.
                 // So, make sure HTTP request is at hand.
                 if (attributes instanceof ServletRequestAttributes) {
-                    final HttpServletRequest request =
-                            ((ServletRequestAttributes) attributes).getRequest();
+                    final HttpServletRequest request = ((ServletRequestAttributes) attributes).getRequest();
                     if (null != request && !omitApiKey(request)) {
                         // Get possible API key from the request.
                         final String apiKey = getApiKey(request);
